@@ -8,13 +8,14 @@
 [Hebrew]()
 [Privacy]()
 
-An automated agent that accepts a website URL, extracts user-visible text, and checks for spelling errors, grammar issues, and suspicious phrasing — using a **local** language model (Ollama). No site content is sent to external cloud services.
+An automated agent that accepts a website URL, extracts user-visible text, and checks for spelling errors, grammar issues, and suspicious phrasing — using a **local** language model (Ollama). Run via **CLI** or **Streamlit GUI**. No site content is sent to external cloud services.
 
 ---
 
 ## 📑 Table of Contents
 
 - [📋 Overview](#-overview)
+- [⚡ Quick Start](#-quick-start)
 - [🏗️ Architecture](#️-architecture)
 - [📁 Project Structure](#-project-structure)
 - [⚙️ Workflow](#️-workflow)
@@ -43,19 +44,90 @@ The system supports **Hebrew** and **English** websites. The pipeline:
 5. ✂️ Text is split into chunks (due to model context limits).
 6. 🧠 A **LangChain Agent** sends each chunk to the **selected Ollama model** (`localhost:11434`).
 7. 📐 The model returns structured findings (JSON / Pydantic).
-8. 📄 Results are shown as **JSON** in the terminal or as a styled **HTML report** (RTL, Hebrew labels).
+8. 📄 Results are shown as **JSON** in the terminal, a styled **HTML report**, or in the **Streamlit GUI**.
 
-During analysis, progress bars show model benchmarking and chunk-by-chunk analysis in the terminal.
+You can run the agent via **CLI** (URL on the command line) or **GUI** (URL entered in the browser at `http://localhost:8501`).
+
+During analysis, progress bars show model benchmarking and chunk-by-chunk analysis in the terminal or GUI.
+
+![Cyber Proofreader GUI — full interface](ui/assets/gui-full.png)
+
+*Streamlit GUI: URL input, config panel (scan range, analysis mode, model override, target language), live results after scan, and HTML export.*
+
+---
+
+## ⚡ Quick Start
+
+### Prerequisites
+
+
+| Requirement  | Notes                                                                            |
+| ------------ | -------------------------------------------------------------------------------- |
+| Python 3.14+ | With `venv` support                                                              |
+| Ollama       | [Download](https://ollama.com/download) — must be **running** (system tray icon) |
+| Internet     | For crawling target websites (analysis stays 100% local)                         |
+| ~4–8 GB RAM  | Depends on model size                                                            |
+
+
+### Install (one time)
+
+```powershell
+git clone https://github.com/shlomi10/hebrew-site-proofreader-agent.git
+cd hebrew-site-proofreader-agent
+
+python -m venv venv
+.\venv\Scripts\Activate.ps1        # macOS/Linux: source venv/bin/activate
+pip install -r requirements.txt
+playwright install chromium
+```
+
+Install **Ollama**, open a **new terminal**, then pull at least one model:
+
+```powershell
+ollama pull aminadaven/dictalm2.0-instruct:q4_k_m   # Hebrew (recommended)
+ollama pull llama3.2                                 # English + benchmark comparison
+ollama list
+```
+
+### Run (every time)
+
+Activate the virtual environment, then choose **CLI** or **GUI**:
+
+
+| Mode    | Command                             | Where to enter URL                 |
+| ------- | ----------------------------------- | ---------------------------------- |
+| **CLI** | `python main.py https://www.gov.il` | Command line                       |
+| **GUI** | `python main.py --gui`              | Browser at `http://localhost:8501` |
+
+
+```powershell
+.\venv\Scripts\Activate.ps1
+
+# CLI — JSON output
+python main.py https://www.gov.il
+
+# CLI — HTML report
+python main.py https://www.gov.il --html --open
+
+# GUI — no URL needed in the command
+python main.py --gui
+```
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         main.py (CLI)                           │
-│  url, --max-pages, --extract-only, --html, --open, --model      │
-└────────────────────────────┬────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│  main.py (CLI)                    ui/app.py (Streamlit GUI)          │
+│  python main.py <url> [flags]     python main.py --gui               │
+│  URL on command line              URL entered in browser             │
+└────────────────────────────┬─────────────────────────────────────────┘
+                             │
+                    ┌────────▼────────┐
+                    │    runner.py    │
+                    │  shared pipeline│
+                    └────────┬────────┘
                              │
          ┌───────────────────┼───────────────────┐
          ▼                   ▼                   ▼
@@ -73,11 +145,11 @@ During analysis, progress bars show model benchmarking and chunk-by-chunk analys
          │  detect he/en   │                       │
          └────────┬────────┘                       │
                   ▼                                │
-         ┌───────────────────┐                     │
-         │  analysis/        │                     │
-         │  model_selector   │                     │
-         │  benchmark 7 LLMs │                     │
-         └────────┬──────────┘                     │
+         ┌──────────────────┐                      │
+         │  analysis/       │                      │
+         │  model_selector  │                      │
+         │  benchmark 7 LLMs│                      │
+         └────────┬─────────┘                      │
                   ▼                                │
          ┌─────────────────┐                       │
          │  analysis/      │                       │
@@ -90,52 +162,60 @@ During analysis, progress bars show model benchmarking and chunk-by-chunk analys
          │  agent.py       │
          │  LangChain Agent│
          │  + ChatOllama   │
-         │  + tqdm progress│
          └────────┬────────┘
                   ▼
          ┌─────────────────┐
          │  analysis/      │
          │  schemas.py     │
-         │  TextIssue      │
-         │  TextAnalysis   │
          └────────┬────────┘
                   ▼
-    ┌─────────────┴─────────────┐
-    ▼                           ▼
- stdout (JSON)         reporting/report.py → report.html
+    ┌─────────────┴─────────────────────┐
+    ▼                 ▼                 ▼
+ CLI: JSON      CLI: report.html    GUI: live view
+ (stdout)       reporting/report.py  + HTML download
 ```
 
 ### 🔄 Flow Diagram (Mermaid)
 
 ```mermaid
 flowchart TD
-    A[User enters URL] --> B{max-pages > 1?}
+    START{Entry point?}
+    START -->|CLI| A[main.py — URL on command line]
+    START -->|GUI| A2[ui/app.py — URL in browser]
+    A --> R[runner.py — shared pipeline]
+    A2 --> R
+    R --> B{max-pages > 1?}
     B -->|no| C[crawl/extractor.py: Playwright]
     B -->|yes| D[crawl/crawler.py: BFS]
     D --> C
-    C --> E{--extract-only?}
-    E -->|yes| F[Print JSON with text]
+    C --> E{extract-only?}
+    E -->|yes| F[Return extracted text]
     E -->|no| G[analysis/language.py: detect Hebrew or English]
     G --> G2{Supported language?}
     G2 -->|no| G3[Exit: unsupported language]
     G2 -->|yes| G4[analysis/ollama_client: check Ollama]
     G4 --> G5[analysis/model_selector: benchmark 7 models]
     G5 --> H[analysis/text_utils: split into chunks]
-    H --> I[analysis/agent.py: analyze with selected model + progress bar]
+    H --> I[analysis/agent.py: analyze with selected model]
     I --> J[Merge findings]
-    J --> K{--html?}
-    K -->|yes| L[report.html]
-    K -->|no| M[JSON to terminal]
+    J --> K{Output mode?}
+    K -->|CLI + --html| L[report.html]
+    K -->|CLI default| M[JSON to terminal]
+    K -->|GUI| N[Streamlit dashboard + download HTML]
 ```
+
+
 
 ### 🧩 Separation of Concerns
 
 
-| Layer          | Badge   | Responsibility                              |
-| -------------- | ------- | ------------------------------------------- |
-| **Extraction** | extract | Playwright — deterministic, no LLM          |
-| **Analysis**   | analyze | LangChain + Ollama — reasoning on text only |
-| **Output**     | output  | JSON / HTML — presentation                  |
+| Layer          | Responsibility                              |
+| -------------- | ------------------------------------------- |
+| **Entry**      | `main.py` (CLI) or `ui/app.py` (GUI)        |
+| **Pipeline**   | `runner.py` — shared orchestration logic    |
+| **Extraction** | Playwright — deterministic, no LLM          |
+| **Analysis**   | LangChain + Ollama — reasoning on text only |
+| **Output**     | JSON / HTML / Streamlit — presentation      |
 
 
 The agent does **not** open a browser or crawl the web. It receives pre-extracted text and analyzes it. This keeps the design simple, transparent, and easy to debug.
@@ -146,22 +226,30 @@ The agent does **not** open a browser or crawl the web. It receives pre-extracte
 
 ```
 Agent/
-├── main.py                 # 🚀 Entry point — CLI
-├── config.py               # ⚙️ Global settings
-├── crawl/                  # 🎭 Web crawling & text extraction
-│   ├── extractor.py        #    Playwright visible text
-│   └── crawler.py          #    BFS multi-page crawl
-├── analysis/               # 🧠 LLM analysis
-│   ├── agent.py            #    LangChain Agent + Ollama
-│   ├── language.py         #    Hebrew / English detection
-│   ├── model_selector.py   #    7-model benchmark & selection
-│   ├── schemas.py          #    Pydantic output models
-│   ├── ollama_client.py    #    Ollama health check
-│   └── text_utils.py       #    Text chunking
-├── reporting/              # 📄 Report generation
-│   └── report.py           #    HTML report builder
-├── requirements.txt        # 📦 Python dependencies
-└── README.md               # 📖 This file
+├── main.py                 # CLI entry point
+├── runner.py               # Shared pipeline (CLI + GUI)
+├── config.py               # Global settings
+├── crawl/                  # Web crawling & text extraction
+│   ├── extractor.py        # Playwright visible text
+│   └── crawler.py          # BFS multi-page crawl
+├── analysis/               # LLM analysis
+│   ├── agent.py            # LangChain Agent + Ollama
+│   ├── language.py         # Hebrew / English detection
+│   ├── model_selector.py   # 7-model benchmark & selection
+│   ├── schemas.py          # Pydantic output models
+│   ├── ollama_client.py    # Ollama health check
+│   └── text_utils.py       # Text chunking
+├── ui/                     # Streamlit GUI
+│   ├── app.py              # GUI entry point
+│   ├── styles.py           # CSS and UI constants
+│   ├── assets/
+│   │   └── gui-full.png    # GUI screenshot (README)
+│   └── .streamlit/
+│       └── config.toml     # Streamlit theme
+├── reporting/              # Report generation
+│   └── report.py           # HTML report builder
+├── requirements.txt
+└── README.md
 ```
 
 ---
@@ -232,32 +320,32 @@ Models not installed appear in the table with a prior-only score and a `not inst
 
 ### 6️⃣ Report
 
-- **JSON** — default, printed to terminal
-- **HTML** — with `--html`, RTL report with tables and color-coded badges
+- **CLI + JSON** — default, printed to terminal
+- **CLI + HTML** — with `--html`, saved to `report.html` (RTL, Hebrew labels)
+- **GUI** — live dashboard in the browser with summary cards, benchmark table, findings, and HTML download
 
 ---
 
 ## 🧰 Technology Choices
 
 
-| Technology     | Badge      | Role                | Why                                                    |
-| -------------- | ---------- | ------------------- | ------------------------------------------------------ |
-| **Playwright** | Playwright | Text extraction     | Renders JavaScript (SPAs), extracts truly visible text |
-| **LangChain**  | LangChain  | Agent framework     | Ollama integration, structured Pydantic output         |
-| **Ollama**     | Ollama     | Local LLM runtime   | Easy setup, localhost API, no cloud                    |
-| **Pydantic**   | Pydantic   | Output schema       | Validates `type`, `original`, `suggestion`, `reason`   |
-| **httpx**      | httpx      | Ollama health check | Verifies the local server before analysis              |
-| **tqdm**       | tqdm       | Progress bar        | Shows benchmark and analysis progress                  |
-| **langdetect** | langdetect | Language detection  | Identifies Hebrew vs. English from extracted text      |
+| Technology     | Role                | Why                                                    |
+| -------------- | ------------------- | ------------------------------------------------------ |
+| **Playwright** | Text extraction     | Renders JavaScript (SPAs), extracts truly visible text |
+| **LangChain**  | Agent framework     | Ollama integration, structured Pydantic output         |
+| **Ollama**     | Local LLM runtime   | Easy setup, localhost API, no cloud                    |
+| **Pydantic**   | Output schema       | Validates `type`, `original`, `suggestion`, `reason`   |
+| **httpx**      | Ollama health check | Verifies the local server before analysis              |
+| **tqdm**       | Progress bar        | Shows benchmark and analysis progress                  |
+| **langdetect** | Language detection  | Identifies Hebrew vs. English from extracted text      |
+| **Streamlit**  | Web GUI             | Browser interface — URL, settings, live results        |
 
 
 ---
 
 ## 🌐 Language Detection
 
-Hebrew
-English
-Other
+Supported: **Hebrew** and **English** only. All other languages are rejected.
 
 After Playwright extracts text, `analysis/language.py` determines whether the content is Hebrew or English.
 
@@ -331,8 +419,6 @@ Uninstalled models appear in the table with prior × 0.3 only and `not installed
 
 ### Why DictaLM for Hebrew?
 
-DictaLM
-
 DictaLM 2.0 Instruct is the **only model trained specifically on Hebrew corpora** (spelling, grammar, phrasing). General models like Llama or Mistral understand Hebrew but are less accurate for proofreading Hebrew websites. The live benchmark confirms this — DictaLM typically wins on Hebrew sites when installed.
 
 ```python
@@ -340,8 +426,6 @@ OLLAMA_MODEL = "aminadaven/dictalm2.0-instruct:q4_k_m"  # fallback default in co
 ```
 
 ### Why Llama 3.2 / Qwen 2.5 for English?
-
-Llama
 
 English sites need models trained on large English datasets with reliable JSON output. DictaLM is Hebrew-specialized and underperforms on English. Llama 3.2 and Qwen 2.5 consistently score highest in the English benchmark.
 
@@ -391,30 +475,66 @@ Only installed models are benchmarked live. With one model installed, that model
 
 ## 📦 Installation
 
-### 1️⃣ Python virtual environment
+Full step-by-step guide. For a shorter version, see [Quick Start](#-quick-start).
+
+### Step 1 — Clone the repository
 
 ```powershell
-cd D:\python-projects\Agent
+git clone https://github.com/shlomi10/hebrew-site-proofreader-agent.git
+cd hebrew-site-proofreader-agent
+```
+
+### Step 2 — Python environment
+
+Requires **Python 3.14+**.
+
+```powershell
 python -m venv venv
-.\venv\Scripts\Activate.ps1
+.\venv\Scripts\Activate.ps1        # Windows
+# source venv/bin/activate          # macOS / Linux
+
 pip install -r requirements.txt
 playwright install chromium
 ```
 
-### 2️⃣ Ollama
+### Step 3 — Install Ollama
 
-Download and install from: [https://ollama.com/download/windows](https://ollama.com/download/windows)
+1. Download from [https://ollama.com/download](https://ollama.com/download)
+2. Install and open a **new terminal**
+3. Verify Ollama is running (system tray icon on Windows)
 
-Open a **new terminal** after installation, then:
+### Step 4 — Pull models
+
+At least **one model** is required. For full benchmark comparison, pull several:
 
 ```powershell
+# Hebrew (recommended for Israeli sites)
 ollama pull aminadaven/dictalm2.0-instruct:q4_k_m
+
+# English + general fallback
+ollama pull llama3.2
+
+# Optional — for fuller benchmark comparison
+ollama pull mistral
+ollama pull qwen2.5
+ollama pull gemma2
+ollama pull phi3
+
 ollama list
 ```
 
-### 3️⃣ Ollama install locations (optional)
+### Step 5 — Verify setup
 
-- **Ollama app:** `%LOCALAPPDATA%\Programs\Ollama`
+```powershell
+.\venv\Scripts\Activate.ps1
+python main.py https://example.com --extract-only
+```
+
+If text is extracted successfully, the environment is ready.
+
+### Ollama install locations (optional)
+
+- **Ollama app:** `%LOCALAPPDATA%\Programs\Ollama` (Windows)
 - **Downloaded models:** `%USERPROFILE%\.ollama`
 
 To store models on another drive:
@@ -429,55 +549,100 @@ Restart Ollama after changing this variable.
 
 ## 🚀 Usage
 
-### Extract text only (no model)
+Activate the virtual environment before every session:
+
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+
+### Option A — CLI (command line)
+
+The URL is passed as an argument.
+
+#### Extract text only (no LLM)
 
 ```powershell
 python main.py https://ynet.co.il --extract-only
 ```
 
-### Full analysis — JSON (auto language + model selection)
+#### Full analysis — JSON (auto language + model selection)
 
 ```powershell
 python main.py https://www.gov.il
 python main.py https://example.com
 ```
 
-### Force a specific model (skip benchmark)
+#### Full analysis — HTML report
 
 ```powershell
-python main.py https://www.gov.il --model llama3.2
-```
-
-### Skip benchmark (use config default)
-
-```powershell
-python main.py https://www.gov.il --skip-benchmark
-```
-
-### Full analysis — HTML report
-
-```powershell
+python main.py https://www.gov.il --html
 python main.py https://www.gov.il --html --open
 ```
 
-### Crawl multiple pages
+Output file: `report.html` in the project directory.
+
+#### Crawl multiple pages
 
 ```powershell
 python main.py https://example.co.il --max-pages 5 --html
 ```
 
+#### Force a specific model (skip benchmark)
+
+```powershell
+python main.py https://www.gov.il --model llama3.2
+```
+
+#### Skip benchmark (use config default)
+
+```powershell
+python main.py https://www.gov.il --skip-benchmark
+```
+
+### Option B — GUI (browser interface)
+
+No URL in the command — enter it in the browser.
+
+```powershell
+python main.py --gui
+```
+
+Or directly:
+
+```powershell
+cd ui
+streamlit run app.py
+```
+
+Opens `http://localhost:8501` — cyber-themed single-page dashboard (see [Overview](#-overview) screenshot).
+
+| Area | What you get |
+| ---- | ------------ |
+| **Top** | URL field + **▶ ANALYZE** button |
+| **Config panel** | Max pages, extract-only, skip benchmark, model override, target languages |
+| **After scan** | Summary cards, model benchmark table, findings per page |
+| **Export** | Download styled HTML report |
+
+- Live progress bar and status log during analysis
+- Summary cards (language, model, characters, issues)
+- Model benchmark table
+- Findings table per page
+- **Export HTML Report** button
+- Footer: `100% local — offline node`
+
 ### CLI flags
 
 
-| Flag               | Badge      | Description                                              |
-| ------------------ | ---------- | -------------------------------------------------------- |
-| `url`              | required   | Website URL                                              |
-| `--extract-only`   | playwright | Playwright only, skip Ollama                             |
-| `--max-pages N`    | crawl      | Number of pages to crawl (default: 1)                    |
-| `--html [FILE]`    | html       | Save HTML report (default: `report.html`)                |
-| `--open`           | open       | Open the HTML report in the browser                      |
-| `--model NAME`     | model      | Use a specific Ollama model, skip benchmark              |
-| `--skip-benchmark` | skip       | Use `OLLAMA_MODEL` from `config.py` without benchmarking |
+| Flag               | Description                                              |
+| ------------------ | -------------------------------------------------------- |
+| `url`              | Website URL (required for CLI, not for `--gui`)          |
+| `--gui`            | Launch Streamlit GUI (no URL needed)                     |
+| `--extract-only`   | Playwright only, skip Ollama                             |
+| `--max-pages N`    | Number of pages to crawl (default: 1)                    |
+| `--html [FILE]`    | Save HTML report (default: `report.html`)                |
+| `--open`           | Open the HTML report in the browser                      |
+| `--model NAME`     | Use a specific Ollama model, skip benchmark              |
+| `--skip-benchmark` | Use `OLLAMA_MODEL` from `config.py` without benchmarking |
 
 
 ---
@@ -548,7 +713,7 @@ python main.py https://example.co.il --max-pages 5 --html
 - Color-coded badges with icons per issue type (spelling, grammar, suspicious)
 - Summary cards: pages, characters, findings
 - Per-page table with styled meta pills
-- Generated by `reporting/report.py`
+- Generated by `reporting/report.py` (CLI) or downloadable from the GUI
 
 ---
 
@@ -590,16 +755,18 @@ python main.py https://example.co.il --max-pages 5 --html
 ## 🛠️ Troubleshooting
 
 
-| Problem                                    | Badge    | Solution                                            |
-| ------------------------------------------ | -------- | --------------------------------------------------- |
-| `Unsupported language`                     | lang     | Only Hebrew and English sites are supported         |
-| `Could not detect language`                | detect   | Page has too little text to classify                |
-| `ollama is not recognized`                 | install  | Install Ollama and open a new terminal              |
-| `Ollama is not running`                    | start    | Start Ollama from the system tray                   |
-| `Model is not installed`                   | pull     | `ollama pull aminadaven/dictalm2.0-instruct:q4_k_m` |
-| `pull model manifest: file does not exist` | name     | Wrong model name — use the full name above          |
-| `ModuleNotFoundError: langchain`           | pip      | `pip install -r requirements.txt` inside venv       |
-| Playwright errors                          | chromium | `playwright install chromium`                       |
+| Problem                                    | Badge    | Solution                                                  |
+| ------------------------------------------ | -------- | --------------------------------------------------------- |
+| `Unsupported language`                     | lang     | Only Hebrew and English sites are supported               |
+| `Could not detect language`                | detect   | Page has too little text to classify                      |
+| `ollama is not recognized`                 | install  | Install Ollama and open a new terminal                    |
+| `Ollama is not running`                    | start    | Start Ollama from the system tray                         |
+| `Model is not installed`                   | pull     | `ollama pull aminadaven/dictalm2.0-instruct:q4_k_m`       |
+| `pull model manifest: file does not exist` | name     | Wrong model name — use the full name above                |
+| `ModuleNotFoundError: langchain`           | pip      | `pip install -r requirements.txt` inside venv             |
+| Playwright errors                          | chromium | `playwright install chromium`                             |
+| `streamlit is not recognized`              | pip      | `pip install streamlit` inside venv                       |
+| GUI does not open                          | gui      | `python main.py --gui` or `cd ui && streamlit run app.py` |
 
 
 ---

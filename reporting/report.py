@@ -151,6 +151,9 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
         if "char_count" in page
     )
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    language_info = report.get("language") if isinstance(report.get("language"), dict) else {}
+    model_name = str(report.get("model", "—"))
+    lang_label = str(language_info.get("name", "—"))
     page_sections: list[str] = []
 
     for url, page_data in pages:
@@ -230,38 +233,46 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>דוח בדיקת אתר — {_esc(source_url)}</title>
+  <title>◈ CYBER SCAN REPORT — {_esc(source_url)}</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {{
-      --bg: #f4f6f9;
-      --card: #ffffff;
-      --text: #1a2332;
-      --muted: #5c6b7a;
-      --border: #e2e8f0;
-      --accent: #2563eb;
-      --accent-soft: #dbeafe;
-      --spelling: #eff6ff;
-      --spelling-border: #93c5fd;
-      --spelling-text: #1d4ed8;
-      --grammar: #fffbeb;
-      --grammar-border: #fcd34d;
-      --grammar-text: #b45309;
-      --suspicious: #fef2f2;
-      --suspicious-border: #fca5a5;
-      --suspicious-text: #b91c1c;
-      --ok: #ecfdf5;
-      --ok-border: #6ee7b7;
-      --ok-text: #047857;
-      --error: #fef2f2;
-      --error-border: #fca5a5;
-      --error-text: #991b1b;
-      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --bg: #050810;
+      --card: #0a1018;
+      --text: #c8f4ff;
+      --muted: #5a7a8a;
+      --border: rgba(0, 255, 249, 0.28);
+      --accent: #00fff9;
+      --accent-soft: rgba(0, 255, 249, 0.08);
+      --green: #00ff41;
+      --magenta: #ff2bd6;
+      --amber: #ffb000;
+      --spelling: rgba(0, 255, 249, 0.12);
+      --spelling-border: rgba(0, 255, 249, 0.45);
+      --spelling-text: #00fff9;
+      --grammar: rgba(255, 176, 0, 0.12);
+      --grammar-border: rgba(255, 176, 0, 0.45);
+      --grammar-text: #ffb000;
+      --suspicious: rgba(255, 43, 214, 0.12);
+      --suspicious-border: rgba(255, 43, 214, 0.45);
+      --suspicious-text: #ff2bd6;
+      --ok: rgba(0, 255, 65, 0.1);
+      --ok-border: rgba(0, 255, 65, 0.4);
+      --ok-text: #00ff41;
+      --error: rgba(255, 43, 214, 0.1);
+      --error-border: rgba(255, 43, 214, 0.4);
+      --error-text: #ff6ad5;
+      --shadow: 0 0 24px rgba(0, 255, 249, 0.08);
     }}
     * {{ box-sizing: border-box; }}
     body {{
       margin: 0;
-      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-      background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 220px);
+      font-family: "JetBrains Mono", Consolas, monospace;
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(rgba(0, 255, 249, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 249, 0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
       color: var(--text);
       line-height: 1.6;
     }}
@@ -291,21 +302,34 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
       display: flex;
       gap: 18px;
       align-items: flex-start;
-      background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+      background: linear-gradient(135deg, rgba(0, 255, 249, 0.08) 0%, rgba(255, 43, 214, 0.08) 100%);
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: 4px;
       padding: 28px 32px;
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow), inset 0 0 40px rgba(0, 255, 249, 0.03);
       margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }}
+    .hero::before {{
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--magenta), transparent);
     }}
     .hero-icon {{
       width: 3.4rem;
       height: 3.4rem;
-      border-radius: 16px;
+      border-radius: 4px;
       display: grid;
       place-items: center;
       background: var(--accent-soft);
-      color: var(--accent);
+      color: var(--green);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 16px rgba(0, 255, 65, 0.2);
     }}
     .hero-icon .icon {{
       width: 1.8rem;
@@ -313,7 +337,12 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
     }}
     .hero h1 {{
       margin: 0 0 8px;
-      font-size: 1.9rem;
+      font-family: "Orbitron", sans-serif;
+      font-size: 1.5rem;
+      color: var(--green);
+      text-shadow: 0 0 12px rgba(0, 255, 65, 0.5);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }}
     .hero p {{
       margin: 0;
@@ -322,9 +351,10 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
       flex-wrap: wrap;
       gap: 8px;
       align-items: center;
+      font-size: 0.85rem;
     }}
     .hero-source {{
-      color: var(--text);
+      color: var(--accent);
     }}
     .hero-time {{
       display: inline-flex;
@@ -343,39 +373,44 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
       align-items: center;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 4px;
       padding: 20px;
       box-shadow: var(--shadow);
     }}
     .stat-icon {{
       width: 3rem;
       height: 3rem;
-      border-radius: 14px;
+      border-radius: 4px;
       display: grid;
       place-items: center;
       color: var(--accent);
-      background: #f8fafc;
+      background: var(--accent-soft);
       border: 1px solid var(--border);
     }}
     .stat-icon-issues {{
-      color: var(--suspicious-text);
+      color: var(--magenta);
       background: var(--suspicious);
       border-color: var(--suspicious-border);
     }}
     .stat .label {{
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.75rem;
       margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }}
     .stat .value {{
-      font-size: 1.9rem;
+      font-family: "Orbitron", sans-serif;
+      font-size: 1.6rem;
       font-weight: 700;
       line-height: 1.1;
+      color: var(--green);
+      text-shadow: 0 0 8px rgba(0, 255, 65, 0.35);
     }}
     .page-card {{
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 18px;
+      border-radius: 4px;
       padding: 24px;
       margin-bottom: 20px;
       box-shadow: var(--shadow);
@@ -390,14 +425,16 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
     }}
     .page-header h2 {{
       margin: 0;
-      font-size: 1.1rem;
+      font-family: "Orbitron", sans-serif;
+      font-size: 0.95rem;
       word-break: break-all;
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      color: var(--accent);
     }}
     .page-header a {{
-      color: var(--accent);
+      color: var(--green);
       text-decoration: none;
     }}
     .page-header a:hover {{
@@ -412,12 +449,12 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #f8fafc;
+      background: var(--accent-soft);
       border: 1px solid var(--border);
-      border-radius: 999px;
+      border-radius: 2px;
       padding: 7px 12px;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.82rem;
     }}
     .meta-pill-alert {{
       background: var(--suspicious);
@@ -439,9 +476,12 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
       vertical-align: top;
     }}
     th {{
-      background: #f8fafc;
-      color: var(--muted);
+      background: rgba(0, 255, 249, 0.06);
+      color: var(--accent);
       font-weight: 600;
+      font-family: "Orbitron", sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
     }}
     th span {{
       display: inline-flex;
@@ -460,13 +500,13 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      border-radius: 999px;
+      border-radius: 2px;
       padding: 7px 12px;
-      font-size: 0.84rem;
+      font-size: 0.8rem;
       font-weight: 700;
       white-space: nowrap;
       border: 1px solid transparent;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+      box-shadow: 0 0 10px rgba(0, 255, 249, 0.08);
     }}
     .badge-spelling {{
       background: var(--spelling);
@@ -484,13 +524,13 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
       border-color: var(--suspicious-border);
     }}
     .badge-default {{
-      background: #f3f4f6;
-      color: #374151;
-      border-color: #d1d5db;
+      background: rgba(200, 244, 255, 0.08);
+      color: var(--text);
+      border-color: var(--border);
     }}
     .ok-box, .error-box {{
       margin: 0;
-      border-radius: 12px;
+      border-radius: 4px;
       padding: 14px 16px;
       font-weight: 600;
       display: flex;
@@ -525,10 +565,12 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
     <section class="hero">
       <div class="hero-icon">{_icon("report")}</div>
       <div>
-        <h1>דוח בדיקת כתיב וניסוח</h1>
+        <h1>◈ CYBER SCAN REPORT ◈</h1>
         <p>
-          <span>מקור: <strong class="hero-source">{_esc(source_url)}</strong></span>
-          <span class="hero-time">{_icon("clock")}<span>נוצר ב-{generated_at}</span></span>
+          <span>TARGET: <strong class="hero-source">{_esc(source_url)}</strong></span>
+          <span class="hero-time">{_icon("clock")}<span>LOGGED {generated_at}</span></span>
+          <span>LANG: <strong class="hero-source">{_esc(lang_label)}</strong></span>
+          <span>MODEL: <strong class="hero-source">{_esc(model_name)}</strong></span>
         </p>
       </div>
     </section>
@@ -537,8 +579,8 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
       <div class="stat">
         <div class="stat-icon">{_icon("pages")}</div>
         <div>
-          <div class="label">עמודים שנבדקו</div>
-          <div class="value">{len(report)}</div>
+          <div class="label">עמודים שנסרקו</div>
+          <div class="value">{len(pages)}</div>
         </div>
       </div>
       <div class="stat">
@@ -559,7 +601,7 @@ def build_html_report(report: dict[str, object], source_url: str) -> str:
 
     {''.join(page_sections)}
 
-    <div class="footer">{_icon("report")}<span>נוצר אוטומטית על ידי Website Spelling Checker Agent</span></div>
+    <div class="footer">{_icon("report")}<span>◈ CYBER PROOFREADER ARRAY · OFFLINE NODE · AUTO-GENERATED LOG</span></div>
   </div>
 </body>
 </html>"""
