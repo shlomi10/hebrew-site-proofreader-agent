@@ -1,23 +1,15 @@
-[![GitHub Repo](https://img.shields.io/badge/GitHub-hebrew--site--proofreader--agent-181717?logo=github)](https://github.com/shlomi10/hebrew-site-proofreader-agent)
-[![Python](https://img.shields.io/badge/Python-3.14+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/shlomi10/hebrew-site-proofreader-agent/blob/main/LICENSE)
-[![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-000000?logo=ollama&logoColor=white)](https://ollama.com/)
-[![Playwright](https://img.shields.io/badge/Playwright-Chromium-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/python/)
-[![LangChain](https://img.shields.io/badge/LangChain-Agent-1C3C3C?logo=langchain&logoColor=white)](https://www.langchain.com/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-GUI-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
-
-[![Languages](https://img.shields.io/badge/Languages-Hebrew%20%7C%20English-00ff41?style=for-the-badge&labelColor=050810)](#-language-detection)
-[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Local%20%7C%20Offline-00fff9?style=for-the-badge&labelColor=050810)](#-overview)
-
 # 🔍 Website Spelling Checker Agent
 
-[GitHub](https://github.com/shlomi10/hebrew-site-proofreader-agent)
-[Python](https://www.python.org/)
-[Playwright](https://playwright.dev/python/)
-[LangChain](https://www.langchain.com/)
-[Ollama](https://ollama.com/)
-[Hebrew](#-language-detection)
-[Privacy](#-overview)
+[![GitHub](https://img.shields.io/badge/GitHub-Repo-00ff41?style=for-the-badge&logo=github&logoColor=050810&labelColor=050810)](https://github.com/shlomi10/hebrew-site-proofreader-agent)
+[![Python](https://img.shields.io/badge/Python-3.14+-00fff9?style=for-the-badge&logo=python&logoColor=050810&labelColor=050810)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-7fd4a0?style=for-the-badge&labelColor=050810)](https://github.com/shlomi10/hebrew-site-proofreader-agent/blob/main/LICENSE)
+[![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-00ff41?style=for-the-badge&logo=ollama&logoColor=050810&labelColor=050810)](https://ollama.com/)
+[![Playwright](https://img.shields.io/badge/Playwright-Chromium-00fff9?style=for-the-badge&logo=playwright&logoColor=050810&labelColor=050810)](https://playwright.dev/python/)
+[![LangChain](https://img.shields.io/badge/LangChain-Agent-7fd4a0?style=for-the-badge&logo=langchain&logoColor=050810&labelColor=050810)](https://www.langchain.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-GUI-00fff9?style=for-the-badge&logo=streamlit&logoColor=050810&labelColor=050810)](https://streamlit.io/)
+
+[![Hebrew | English](https://img.shields.io/badge/Languages-Hebrew%20%7C%20English-00ff41?style=for-the-badge&labelColor=050810)](#-language-detection)
+[![100% Local | Offline](https://img.shields.io/badge/Privacy-100%25%20Local%20%7C%20Offline-00fff9?style=for-the-badge&labelColor=050810)](#-overview)
 
 An automated agent that accepts a website URL, extracts user-visible text, and checks for spelling errors, grammar issues, and suspicious phrasing — using a **local** language model (Ollama). Run via **CLI** or **Streamlit GUI**. No site content is sent to external cloud services.
 
