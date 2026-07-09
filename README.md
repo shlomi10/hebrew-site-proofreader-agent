@@ -15,6 +15,7 @@ An automated agent that accepts a website URL, extracts user-visible text, and c
 ## 📑 Table of Contents
 
 - [📋 Overview](#-overview)
+  - [📌 מטרת הפרויקט](#-מטרת-הפרויקט)
 - [⚡ Quick Start](#-quick-start)
 - [🏗️ Architecture](#️-architecture)
 - [📁 Project Structure](#-project-structure)
@@ -35,6 +36,20 @@ An automated agent that accepts a website URL, extracts user-visible text, and c
 
 ## 📋 Overview
 
+### 📌 מטרת הפרויקט
+
+<div dir="rtl" align="right">
+
+פיתוח Agent אוטומטי שמקבל מהמשתמש כתובת של אתר אינטרנט, סורק עמודים באתר, מאתר טקסטים גלויים למשתמש, ובודק האם קיימות בהם שגיאות כתיב או ניסוחים חשודים.
+
+ה-Agent חייב להשתמש במודל שפה לוקאלי שרץ על מחשב המפתח, ללא שליחת תוכן האתר לשירותי ענן חיצוניים.
+
+יש לחבר מודל שרלוונטי לסוג הבעיה המתוארת — ולהסביר מדוע נבחר המודל המסוים.
+
+ה-Agent ירוץ בעברית ובאנגלית, ויש לבצע השוואה מדעית של לפחות 6 מודלים שונים.
+
+</div>
+
 The system supports **Hebrew** and **English** websites. The pipeline:
 
 1. 🌐 User provides a URL.
@@ -52,7 +67,7 @@ During analysis, progress bars show model benchmarking and chunk-by-chunk analys
 
 ![Cyber Proofreader GUI — full interface](ui/assets/gui-full.png)
 
-*Streamlit GUI: URL input, config panel (scan range, analysis mode, model override, target language), live results after scan, and HTML export.*
+*Current cyber-themed GUI: URL + ▶ ANALYZE, config panel (scan range, analysis mode, model override, languages), live results after scan, HTML export.*
 
 ---
 

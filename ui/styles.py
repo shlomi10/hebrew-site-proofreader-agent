@@ -1,135 +1,4 @@
-INTERACTIVE_CSS = """
-.stButton > button,
-button[data-testid="stBaseButton-primary"],
-button[data-testid="stBaseButton-secondary"],
-button[data-testid="stBaseButton-primaryFormSubmit"],
-[data-testid="stBaseButton-primary"],
-[data-testid="stBaseButton-secondary"] {
-    background: rgba(255, 176, 0, 0.2) !important;
-    background-color: rgba(255, 176, 0, 0.2) !important;
-    border: 1px solid #ffc933 !important;
-    color: #fff4cc !important;
-    font-family: 'Orbitron', sans-serif !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.08em !important;
-    text-transform: uppercase !important;
-    border-radius: 4px !important;
-    min-height: 2.75rem !important;
-    box-shadow: 0 0 18px rgba(255, 176, 0, 0.38), inset 0 0 12px rgba(255, 176, 0, 0.1) !important;
-    transition: all 0.2s ease !important;
-}
-
-.stButton > button:hover,
-button[data-testid="stBaseButton-primary"]:hover,
-button[data-testid="stBaseButton-secondary"]:hover {
-    background: rgba(255, 176, 0, 0.32) !important;
-    background-color: rgba(255, 176, 0, 0.32) !important;
-    border-color: #ffd966 !important;
-    color: #fff8dc !important;
-    box-shadow: 0 0 28px rgba(255, 176, 0, 0.55), inset 0 0 16px rgba(255, 176, 0, 0.14) !important;
-}
-
-[data-testid="stTextInput"],
-[data-testid="stNumberInput"],
-.stTextInput,
-.stNumberInput {
-    background: rgba(255, 176, 0, 0.1) !important;
-    border: 1px solid rgba(255, 176, 0, 0.55) !important;
-    border-radius: 4px !important;
-    padding: 0.2rem 0.35rem !important;
-    box-shadow: inset 0 0 14px rgba(255, 176, 0, 0.1) !important;
-}
-
-[data-testid="stTextInput"] [data-baseweb="input"],
-[data-testid="stNumberInput"] [data-baseweb="input"],
-[data-testid="stTextInput"] [data-baseweb="base-input"],
-[data-testid="stNumberInput"] [data-baseweb="base-input"],
-div[data-baseweb="input"] {
-    background: #142436 !important;
-    background-color: #142436 !important;
-    border: 1px solid rgba(255, 176, 0, 0.65) !important;
-    border-radius: 4px !important;
-    box-shadow: inset 0 0 10px rgba(255, 176, 0, 0.12) !important;
-}
-
-[data-testid="stTextInput"] input,
-[data-testid="stNumberInput"] input,
-.stTextInput input,
-.stNumberInput input {
-    background: transparent !important;
-    background-color: transparent !important;
-    color: #ffe8a8 !important;
-    border: none !important;
-    min-height: 2.75rem !important;
-    font-family: 'JetBrains Mono', monospace !important;
-}
-
-[data-testid="stTextInput"] input::placeholder {
-    color: rgba(255, 200, 80, 0.5) !important;
-}
-
-[data-testid="stTextInput"] [data-baseweb="input"]:focus-within,
-[data-testid="stNumberInput"] [data-baseweb="input"]:focus-within {
-    border-color: #ffd966 !important;
-    box-shadow: 0 0 16px rgba(255, 176, 0, 0.4), inset 0 0 12px rgba(255, 176, 0, 0.14) !important;
-}
-
-[data-testid="stNumberInput"] button {
-    background: rgba(255, 176, 0, 0.22) !important;
-    background-color: rgba(255, 176, 0, 0.22) !important;
-    border: 1px solid rgba(255, 176, 0, 0.65) !important;
-    color: #ffe8a8 !important;
-}
-
-[data-testid="stNumberInput"] button:hover {
-    background: rgba(255, 176, 0, 0.34) !important;
-    background-color: rgba(255, 176, 0, 0.34) !important;
-    border-color: #ffd966 !important;
-    color: #fff4cc !important;
-}
-
-[data-testid="stCheckbox"],
-[data-testid="stCheckbox"] label {
-    background: rgba(255, 176, 0, 0.08) !important;
-    border: 1px solid rgba(255, 176, 0, 0.45) !important;
-    border-radius: 4px !important;
-    padding: 0.2rem 0.4rem !important;
-    margin-bottom: 0.2rem !important;
-    box-shadow: inset 0 0 10px rgba(255, 176, 0, 0.06) !important;
-}
-
-[data-testid="stCheckbox"] label span,
-[data-testid="stCheckbox"] label p,
-[data-testid="stCheckbox"] label div {
-    color: #ffe8a8 !important;
-}
-
-[data-testid="stCheckbox"] input[type="checkbox"] {
-    accent-color: #ffb000 !important;
-}
-
-[data-testid="stExpander"] summary,
-[data-testid="stExpander"] details {
-    background: rgba(255, 176, 0, 0.1) !important;
-    border: 1px solid rgba(255, 176, 0, 0.45) !important;
-    border-radius: 4px !important;
-    color: #ffe8a8 !important;
-}
-
-[data-testid="stExpander"] summary:hover {
-    background: rgba(255, 176, 0, 0.18) !important;
-    border-color: #ffd966 !important;
-}
-
-div[data-testid="stHorizontalBlock"]:has([data-testid="stTextInput"]) {
-    align-items: flex-end !important;
-}
-
-div[data-testid="stHorizontalBlock"]:has([data-testid="stTextInput"]) [data-testid="column"]:last-child .stButton {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-}
-"""
+from interactive_css import INTERACTIVE_CSS
 
 CUSTOM_CSS = """
 <style>
@@ -144,9 +13,7 @@ CUSTOM_CSS = """
     --cyber-amber: #ffb000;
     --cyber-text: #c8f4ff;
     --cyber-dim: #5a7a8a;
-    --cyber-interactive-bg: #142436;
-    --cyber-interactive-border: #ffb000;
-    --cyber-interactive-glow: rgba(255, 176, 0, 0.28);
+    --cyber-tactical: #0a1410;
 }
 
 .stApp {
@@ -307,12 +174,50 @@ section[data-testid="stSidebar"],
     text-shadow: 0 0 8px rgba(0, 255, 65, 0.35);
 }
 
-[data-testid="stVerticalBlockBorderWrapper"] {
-    border: 1px solid rgba(0, 255, 249, 0.35) !important;
-    background: rgba(0, 255, 249, 0.04) !important;
-    box-shadow: 0 0 10px rgba(0, 255, 249, 0.06) !important;
-    border-radius: 4px !important;
+[data-testid="stVerticalBlockBorderWrapper"],
+[data-testid="stLayoutWrapper"]:has(.config-section) {
+    border: 1px solid rgba(0, 255, 65, 0.4) !important;
+    background: rgba(8, 28, 16, 0.55) !important;
+    box-shadow: 0 0 12px rgba(0, 255, 65, 0.1), inset 0 0 16px rgba(0, 255, 65, 0.03) !important;
+    border-radius: 2px !important;
     padding: 0.45rem 0.55rem !important;
+    overflow: visible !important;
+}
+
+@keyframes config-box-pop {
+    0% {
+        transform: scale(1.16);
+        opacity: 0.55;
+        box-shadow: 0 0 40px rgba(0, 255, 65, 0.45), inset 0 0 20px rgba(0, 255, 249, 0.12) !important;
+        border-color: rgba(0, 255, 249, 0.75) !important;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 0 12px rgba(0, 255, 65, 0.1), inset 0 0 16px rgba(0, 255, 65, 0.03) !important;
+        border-color: rgba(0, 255, 65, 0.4) !important;
+    }
+}
+
+[data-testid="stHorizontalBlock"]:last-of-type [data-testid="stLayoutWrapper"]:has(.config-section) {
+    animation: config-box-pop 0.75s cubic-bezier(0.22, 1.12, 0.36, 1) both;
+    transform-origin: center bottom;
+}
+
+[data-testid="stHorizontalBlock"]:last-of-type [data-testid="stColumn"]:nth-child(1) [data-testid="stLayoutWrapper"]:has(.config-section) {
+    animation-delay: 0.04s;
+}
+
+[data-testid="stHorizontalBlock"]:last-of-type [data-testid="stColumn"]:nth-child(2) [data-testid="stLayoutWrapper"]:has(.config-section) {
+    animation-delay: 0.12s;
+}
+
+[data-testid="stHorizontalBlock"]:last-of-type [data-testid="stColumn"]:nth-child(3) [data-testid="stLayoutWrapper"]:has(.config-section) {
+    animation-delay: 0.2s;
+}
+
+[data-testid="stHorizontalBlock"]:last-of-type [data-testid="stColumn"]:nth-child(4) [data-testid="stLayoutWrapper"]:has(.config-section) {
+    animation-delay: 0.28s;
 }
 
 """ + INTERACTIVE_CSS + """
