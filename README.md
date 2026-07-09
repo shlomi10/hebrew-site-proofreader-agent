@@ -65,7 +65,7 @@ You can run the agent via **CLI** (URL on the command line) or **GUI** (URL ente
 
 During analysis, progress bars show model benchmarking and chunk-by-chunk analysis in the terminal or GUI.
 
-![Cyber Proofreader GUI — full interface](ui/assets/gui-full.png)
+![Cyber Proofreader GUI — full interface](ui/assets/gui-cyber.png)
 
 *Current cyber-themed GUI: URL + ▶ ANALYZE, config panel (scan range, analysis mode, model override, languages), live results after scan, HTML export.*
 
@@ -258,7 +258,7 @@ Agent/
 │   ├── app.py              # GUI entry point
 │   ├── styles.py           # CSS and UI constants
 │   ├── assets/
-│   │   └── gui-full.png    # GUI screenshot (README)
+│   │   └── gui-cyber.png   # GUI screenshot (README)
 │   └── .streamlit/
 │       └── config.toml     # Streamlit theme
 ├── reporting/              # Report generation
