@@ -1,15 +1,17 @@
 # 🔍 Website Spelling Checker Agent
 
-[![GitHub](https://img.shields.io/badge/GitHub-Repo-00ff41?style=for-the-badge&logo=github&logoColor=050810&labelColor=050810)](https://github.com/shlomi10/hebrew-site-proofreader-agent)
-[![Python](https://img.shields.io/badge/Python-3.14+-00fff9?style=for-the-badge&logo=python&logoColor=050810&labelColor=050810)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-7fd4a0?style=for-the-badge&labelColor=050810)](https://github.com/shlomi10/hebrew-site-proofreader-agent/blob/main/LICENSE)
-[![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-00ff41?style=for-the-badge&logo=ollama&logoColor=050810&labelColor=050810)](https://ollama.com/)
-[![Playwright](https://img.shields.io/badge/Playwright-Chromium-00fff9?style=for-the-badge&logo=playwright&logoColor=050810&labelColor=050810)](https://playwright.dev/python/)
-[![LangChain](https://img.shields.io/badge/LangChain-Agent-7fd4a0?style=for-the-badge&logo=langchain&logoColor=050810&labelColor=050810)](https://www.langchain.com/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-GUI-00fff9?style=for-the-badge&logo=streamlit&logoColor=050810&labelColor=050810)](https://streamlit.io/)
+[![GitHub](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/shlomi10/hebrew-site-proofreader-agent)
+[![Python](https://img.shields.io/badge/Python-3.14+-3776AB?style=for-the-badge&logo=python&logoColor=FFD43B)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](https://github.com/shlomi10/hebrew-site-proofreader-agent/blob/main/LICENSE)
+[![Ollama](https://img.shields.io/badge/Ollama-Local_LLM-7C3AED?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com/)
+[![Playwright](https://img.shields.io/badge/Playwright-Chromium-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/python/)
+[![LangChain](https://img.shields.io/badge/LangChain-Agent-E76F51?style=for-the-badge&logo=langchain&logoColor=white)](https://www.langchain.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-GUI-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
 
-[![Hebrew | English](https://img.shields.io/badge/Languages-Hebrew%20%7C%20English-00ff41?style=for-the-badge&labelColor=050810)](#-language-detection)
-[![100% Local | Offline](https://img.shields.io/badge/Privacy-100%25%20Local%20%7C%20Offline-00fff9?style=for-the-badge&labelColor=050810)](#-overview)
+[![Hebrew | English](https://img.shields.io/badge/Languages-Hebrew%20%7C%20English-2563EB?style=for-the-badge&logo=googletranslate&logoColor=white)](#-language-detection)
+[![100% Local | Offline](https://img.shields.io/badge/Privacy-100%25%20Local%20%7C%20Offline-06B6D4?style=for-the-badge&logo=proton&logoColor=white)](#-overview)
+[![CLI + GUI](https://img.shields.io/badge/Interface-CLI%20%2B%20GUI-F59E0B?style=for-the-badge&logo=gnometerminal&logoColor=white)](#-usage)
+[![7 Models](https://img.shields.io/badge/Benchmark-7%20Models-EC4899?style=for-the-badge&logo=speedtest&logoColor=white)](#-model-selection)
 
 An automated agent that accepts a website URL, extracts user-visible text, and checks for spelling errors, grammar issues, and suspicious phrasing — using a **local** language model (Ollama). Run via **CLI** or **Streamlit GUI**. No site content is sent to external cloud services.
 
