@@ -1,3 +1,14 @@
+[![GitHub Repo](https://img.shields.io/badge/GitHub-hebrew--site--proofreader--agent-181717?logo=github)](https://github.com/shlomi10/hebrew-site-proofreader-agent)
+[![Python](https://img.shields.io/badge/Python-3.14+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/shlomi10/hebrew-site-proofreader-agent/blob/main/LICENSE)
+[![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-000000?logo=ollama&logoColor=white)](https://ollama.com/)
+[![Playwright](https://img.shields.io/badge/Playwright-Chromium-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/python/)
+[![LangChain](https://img.shields.io/badge/LangChain-Agent-1C3C3C?logo=langchain&logoColor=white)](https://www.langchain.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-GUI-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
+
+[![Languages](https://img.shields.io/badge/Languages-Hebrew%20%7C%20English-00ff41?style=for-the-badge&labelColor=050810)](#-language-detection)
+[![Privacy](https://img.shields.io/badge/Privacy-100%25%20Local%20%7C%20Offline-00fff9?style=for-the-badge&labelColor=050810)](#-overview)
+
 # 🔍 Website Spelling Checker Agent
 
 [GitHub](https://github.com/shlomi10/hebrew-site-proofreader-agent)
@@ -5,8 +16,8 @@
 [Playwright](https://playwright.dev/python/)
 [LangChain](https://www.langchain.com/)
 [Ollama](https://ollama.com/)
-[Hebrew]()
-[Privacy]()
+[Hebrew](#-language-detection)
+[Privacy](#-overview)
 
 An automated agent that accepts a website URL, extracts user-visible text, and checks for spelling errors, grammar issues, and suspicious phrasing — using a **local** language model (Ollama). Run via **CLI** or **Streamlit GUI**. No site content is sent to external cloud services.
 
